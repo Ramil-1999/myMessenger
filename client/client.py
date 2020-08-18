@@ -1,5 +1,6 @@
 from authPage import *
 from toServer import *
+from dialogPage import *
 # cd Documents\projects\pycharm\myMessenger\server
 
 
@@ -9,8 +10,8 @@ class Client:
 
 
 client = Client()
-auth = AuthPage(client.broadcast)
-
+AuthPage(client.broadcast)
+DialogPage(client.broadcast)
 
 
 

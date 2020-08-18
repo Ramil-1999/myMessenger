@@ -9,6 +9,6 @@ class ClientBroadcastClass:
     def send_info(self, data):
         try:
             self.socket.sendall(data.encode())
-            return 0
+            return 1
         except:
             return 0
