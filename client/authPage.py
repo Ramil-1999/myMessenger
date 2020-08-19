@@ -1,9 +1,10 @@
 from tkinter import *
 from tkinter.ttk import *
 
+
 class AuthPage:
-    def __init__(self, broadcast):
-        self.broadcast = broadcast
+    def __init__(self, client):
+        self.client = client
         self.root = Tk()
         self.root.config(bg='gray22')
         self.root.title('Authentication Page')
@@ -30,7 +31,8 @@ class AuthPage:
 
     def send_info(self):
         tmp = self.name.get() + ' ' + self.password.get()
-        if self.broadcast.send_info(tmp):
+        if self.client.broadcast.send_info(tmp):
             self.root.destroy()
         else:
+            self.client.logger.logging('Error of auth: Check something')
             AuthPage.create_attention("Check something")
