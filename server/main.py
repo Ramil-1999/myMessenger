@@ -1,15 +1,13 @@
 import server
+import json
 
 
 def main():
     serv = server.Server('127.0.0.1', 10001)
     conn, adr = serv.socket.accept()
-
     while True:
-        message = conn.recv(1024)
-        print(message.decode())
-        if not message:
-            conn.close()
+        message = json.loads(conn.recv(1024).decode())
+        print(serv.db.find_user(message['name']))
 
 
 if __name__ == '__main__':

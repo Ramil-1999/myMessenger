@@ -30,8 +30,12 @@ class AuthPage:
         view.mainloop()
 
     def send_info(self):
-        tmp = self.name.get() + ' ' + self.password.get()
-        if self.client.broadcast.send_info(tmp):
+        dict = {
+            'type': 'auth',
+            'name': self.name.get(),
+            'password': self.password.get()
+                }
+        if self.client.broadcast.send_info(dict):
             self.root.destroy()
         else:
             self.client.logger.logging('Error of auth: Check something')

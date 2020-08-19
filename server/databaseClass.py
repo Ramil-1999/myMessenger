@@ -21,16 +21,12 @@ class Db:
     def __init__(self):
         self.conn = MySQLConnection(**read_db_config())
 
-    def fetch_one(self):
-        try:
-            cursor = self.conn.cursor()
-            cursor.execute("SELECT * FROM users")
+    def find_user(self, username):
+        cursor = self.conn.cursor()
+        cursor.execute("SELECT * FROM users")
 
-            row = cursor.fetchone()
-
-            return row
-
-        except Error as e:
-            print(e)
-
-        cursor.close()
+        result = cursor.fetchall()
+        for key in result:
+            if key[1] == username:
+                return key[2]
+        return -1

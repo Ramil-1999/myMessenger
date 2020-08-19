@@ -2,7 +2,7 @@ from tkinter import *
 from tkinter.ttk import *
 
 
-class DialogPage:
+class DialogsPage:
     def __init__(self, broadcast):
         self.broadcast = broadcast
         self.root = Tk()

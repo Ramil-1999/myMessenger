@@ -1,6 +1,6 @@
 from authPage import *
 from toServer import *
-from dialogPage import *
+from dialogsPage import *
 from logger import *
 # cd Documents\projects\pycharm\myMessenger\server
 
@@ -13,7 +13,7 @@ class Client:
 
 client = Client()
 AuthPage(client)
-DialogPage(client)
+DialogsPage(client)
 
 
 

@@ -1,4 +1,5 @@
 import socket
+import json
 
 
 class ClientBroadcastClass:
@@ -7,8 +8,9 @@ class ClientBroadcastClass:
         print("connected")
 
     def send_info(self, data):
+        request = json.dumps(data)
         try:
-            self.socket.sendall(data.encode())
-            return 0
+            self.socket.sendall(request.encode())
+            return 1
         except:
             return 0
