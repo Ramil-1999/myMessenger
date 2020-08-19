@@ -32,8 +32,8 @@ class AuthPage:
     def send_info(self):
         dict = {
             'type': 'auth',
-            'name': self.name.get(),
-            'password': self.password.get()
+            'username': self.name.get(),
+            'hash': self.password.get()
                 }
         if self.client.broadcast.send_info(dict):
             self.root.destroy()

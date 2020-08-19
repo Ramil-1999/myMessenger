@@ -7,7 +7,7 @@ def main():
     conn, adr = serv.socket.accept()
     while True:
         message = json.loads(conn.recv(1024).decode())
-        print(serv.db.find_user(message['name']))
+        print(serv.auth(message))
 
 
 if __name__ == '__main__':
