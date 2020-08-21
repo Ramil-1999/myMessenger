@@ -12,9 +12,9 @@ class Server:
         self.socket.bind((host, port))
         self.socket.listen(1)
 
-    def send_data(self, message):
-        request = json.dumps(message)
-        self.socket.sendall(request.encode())
+    def send_data(self, data):
+        request = json.dumps(data)
+        self.socket.sendall(data)
 
     def auth(self, message):
         try:
@@ -22,6 +22,8 @@ class Server:
             if result != -1:
                 if result == message['hash']:
                     return 1
+                else:
+                    return 0
         except Error:
             self.logger.logging('Database connection refused')
             return -1

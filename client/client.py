@@ -12,8 +12,11 @@ class Client:
 
 
 client = Client()
-AuthPage(client)
-DialogsPage(client)
+if AuthPage.show(client):
+    DialogsPage(client)
+
+
+
 
 
 

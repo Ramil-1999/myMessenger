@@ -8,6 +8,7 @@ def main():
     while True:
         message = json.loads(conn.recv(1024).decode())
         print(serv.auth(message))
+        conn.send(json.dumps({'status': 'ok'}).encode())
 
 
 if __name__ == '__main__':
