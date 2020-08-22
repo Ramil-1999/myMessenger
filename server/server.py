@@ -10,7 +10,6 @@ class Server(asyncio.Protocol):
         self.db = Db()
         self.logger = Logger('log.txt')
 
-
     def connection_made(self, transport):
         self.transport = transport
 
