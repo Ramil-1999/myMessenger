@@ -28,5 +28,27 @@ class Db:
         result = cursor.fetchall()
         for key in result:
             if key[1] == username:
+                cursor.close()
                 return key[2]
-        return -1
+        cursor.close()
+        return 0
+
+    def reg_user(self, username, hash):
+        query = "INSERT INTO users(id, username, hash) VALUES(%s,%s)"
+
+        args = (username, hash)
+
+        if self.find_user(username) == 0:
+
+            cursor = self.conn.cursor()
+            cursor.execute( query, args)
+            if cursor.lastrowid:
+                print('last insert id', cursor.lastrowid)
+            else:
+                print('last insert id not found')
+            self.conn.commit()
+            cursor.close()
+            return 1
+        else:
+            return 0
+

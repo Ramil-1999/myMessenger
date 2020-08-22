@@ -1,32 +1,62 @@
 from databaseClass import *
 from logger import Logger
-import socket
+import asyncio
 import json
 
 
-class Server:
-    def __init__(self, host, port):
+class Server(asyncio.Protocol):
+    def __init__(self):
+        super().__init__()
         self.db = Db()
         self.logger = Logger('log.txt')
-        self.socket = socket.socket()
-        self.socket.bind((host, port))
-        self.socket.listen(1)
 
-    def send_data(self, data):
-        request = json.dumps(data)
-        self.socket.sendall(data)
+
+    def connection_made(self, transport):
+        self.transport = transport
+
+    def data_received(self, data):
+        """Метод data_received вызывается при получении данных в сокете"""
+        try:
+            request = json.loads(data.decode())
+
+            if request['type'] == 'auth':
+                result = self.auth(request)
+                if result == 1:
+                    response = {'status': 'ok'}
+                elif result == -1:
+                    response = {'status': 'password'}
+                else:
+                    response = {'status': 'username'}
+            elif request['type'] == 'reg':
+                result = self.reg(request['username'], request['hash'])
+                if result == 1:
+                    response = {'status': 'ok'}
+                else:
+                    response = {'status': 'username'}
+
+        except (ValueError, UnicodeDecodeError, IndexError):
+            print('error')
+
+        self.transport.write(json.dumps(response).encode())
 
     def auth(self, message):
         try:
             result = self.db.find_user(message['username'])
-            if result != -1:
-                if result == message['hash']:
-                    return 1
-                else:
-                    return 0
+            if result == message['hash']:
+                return 1
+            elif result == 0:
+                return 0
+            else:
+                return -1
         except Error:
             self.logger.logging('Database connection refused')
             return -1
 
-    def reg(self, message):
-        pass
+    def reg(self, username, hash):
+
+        result = self.db.reg_user(username, hash)
+        if result:
+            return 1
+        else:
+            return 0
+

@@ -5,7 +5,7 @@ class AuthPage:
     def __init__(self, client):
         self.client = client
         self.root = Tk()
-        self.status = False
+        self.status = 0
 
     def create_widgets(self):
         self.root.title('Authentication Page')
@@ -54,14 +54,15 @@ class AuthPage:
         status = self.client.broadcast.read_data()
         if status['status'] == 'ok':
             self.root.destroy()
-            self.status = True
+            self.status = 1
         elif status['status'] == 'password':
             self.label['text'] = '!wrong password'
-        elif status['status'] == 'login':
-            self.label.text = '!username not registered'
+        elif status['status'] == 'username':
+            self.label['text'] = '!username not registered'
 
     def register(self):
-        reg = RegPage.show(self.client)
+        self.root.destroy()
+        self.status = 2
 
     @staticmethod
     def show(client):

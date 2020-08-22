@@ -7,6 +7,8 @@ class RegPage:
         self.root = Tk()
         self.client = client
         self.status = False
+        self.name_copy = ''
+        self.password_copy = ''
 
     def create_widgets(self):
         self.root.geometry("{0}x{1}+{2}+{3}".format(200, 200, int((self.root.winfo_screenwidth() - 400) / 2),
@@ -28,8 +30,10 @@ class RegPage:
         frame.pack(expand=1)
 
     def send_data(self):
-        if len(self.password2.get()) >= 8:
+        if len(self.password.get()) >= 0:
             if self.password.get() == self.password2.get():
+                self.name_copy = self.name.get()
+                self.password_copy = self.password.get()
                 data_dict = {
                     'type': 'reg',
                     'username': self.name.get(),
@@ -38,23 +42,23 @@ class RegPage:
                 if self.client.broadcast.send_data(data_dict):
                     self.recv()
             else:
+                print(self.password.get(), self.password2.get())
                 self.label['text'] = "!passwords don't match"
         else:
             self.label['text'] = "!password is too short"
 
     def recv(self):
         status = self.client.broadcast.read_data()
+        print(status)
         if status['status'] == 'ok':
             self.root.destroy()
-            print('from RegPage: status become true')
             self.status = True
-        elif status['status'] == 'login':
-            self.label.text = '!A user with this name already exists'
+        elif status['status'] == 'username':
+            self.label['text'] = '!A user with this name already exists'
 
     @staticmethod
     def show(client):
         reg = RegPage(client)
         reg.create_widgets()
-        print()
         reg.root.mainloop()
         return reg.status

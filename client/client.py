@@ -12,8 +12,16 @@ class Client:
 
 
 client = Client()
-if AuthPage.show(client):
+stat = AuthPage.show(client)
+if stat == 1:
     DialogsPage(client)
+    pass
+elif stat == 2:
+    reg_stat = RegPage.show(client)
+    if reg_stat:
+        if AuthPage.show(client) == 1:
+            DialogsPage(client)
+            pass
 
 
 
