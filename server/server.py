@@ -18,6 +18,7 @@ class Server(asyncio.Protocol):
         try:
             request = json.loads(data.decode())
 
+            # отработка запроса на авторизацию
             if request['type'] == 'auth':
                 result = self.auth(request)
                 if result == 1:
@@ -26,12 +27,19 @@ class Server(asyncio.Protocol):
                     response = {'status': 'password'}
                 else:
                     response = {'status': 'username'}
+
+            # отработка запроса на регистрацию
             elif request['type'] == 'reg':
                 result = self.reg(request['username'], request['hash'])
                 if result == 1:
                     response = {'status': 'ok'}
                 else:
                     response = {'status': 'username'}
+
+            # отработка запроса на полученме чатов у пользователя
+            elif request['type'] == 'get_chats':
+                result = self.get_chats(request['user_id'])
+                response = result
 
         except (ValueError, UnicodeDecodeError, IndexError):
             print('error')
@@ -52,10 +60,12 @@ class Server(asyncio.Protocol):
             return -1
 
     def reg(self, username, hash):
-
         result = self.db.reg_user(username, hash)
         if result:
             return 1
         else:
             return 0
 
+    def get_chats(self, user_id):
+        result = self.db.get_chats(user_id)
+        return result

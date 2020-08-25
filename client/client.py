@@ -12,7 +12,8 @@ class Client:
 
 
 client = Client()
-stat = AuthPage.show(client)
+# stat = AuthPage.show(client)
+stat = 0
 if stat == 1:
     DialogsPage(client)
     pass
@@ -23,7 +24,7 @@ elif stat == 2:
             DialogsPage(client)
             pass
 
-
+DialogsPage(client)
 
 
 

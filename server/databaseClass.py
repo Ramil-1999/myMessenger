@@ -52,3 +52,15 @@ class Db:
         else:
             return 0
 
+    def get_chats(self, user_id):
+        cursor = self.conn.cursor()
+        cursor.execute("SELECT * FROM chats")
+
+        result = cursor.fetchall()
+        chats_dict = {}
+        for chat in result:
+            if chat[1] == user_id:
+                chats_dict.update({'user_id': chat[2]})
+            if chat[2] == user_id:
+                chats_dict.update({'user_id': chat[1]})
+        return chats_dict

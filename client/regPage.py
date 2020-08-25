@@ -49,7 +49,6 @@ class RegPage:
 
     def recv(self):
         status = self.client.broadcast.read_data()
-        print(status)
         if status['status'] == 'ok':
             self.root.destroy()
             self.status = True
