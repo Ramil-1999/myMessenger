@@ -11,7 +11,9 @@ CREATE TABLE `chats` (
 )
 
 CREATE TABLE `messages` (
-    `chat_id` int(11) NOT NULL,
+    `message_id` bigint(20)	NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `chat_id` bigint(20) NOT NULL,
     `user_id` int(11) NOT NULL,
-    `text` text
+    `content` TEXT,
+    `time` DATETIME
 )

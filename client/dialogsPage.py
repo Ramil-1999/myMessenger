@@ -5,6 +5,7 @@ class DialogsPage:
     def __init__(self, client):
         self.client = client
         self.chats = []
+        self.messages = []
         self.ask_chats()
         self.root = Tk()
         self.root.title('Dialogs')
@@ -12,12 +13,12 @@ class DialogsPage:
                                                     int((self.root.winfo_screenheight() - 600)/2)))
         self.create_widgets()
 
-
     def create_widgets(self):
         self.frame1 = Frame()
+
         for chat in self.chats:
-            Button(self.frame1, width='100', text=chat, command=lambda: self.open_chat(chat[0]), height=3, anchor='w').pack(fill=X)
-            Button(self.frame1, width='100', text=chat, command=lambda: self.open_chat(chat[0]), height=3, anchor='w').pack(fill=X)
+            Button(self.frame1, width='100', text=chat, command=lambda: self.open_chat(chat['user_id']), height=3, anchor='w').pack(fill=X)
+            Button(self.frame1, width='100', text=chat, command=lambda: self.open_chat(chat['user_id']), height=3, anchor='w').pack(fill=X)
         self.frame1.pack()
         self.root.mainloop()
 
@@ -33,14 +34,19 @@ class DialogsPage:
         frame_top.pack(side='top')
 
         frame_mid = Frame(frame2)
-        Label(frame_mid, text='1 message', width=100, anchor='e').pack()
-        Label(frame_mid, text='2 message', width=100, anchor='w').pack()
+        self.messages = self.ask_history(chat_id)
+        for message in self.messages:
+            print('inside loop')
+            if 1 == message['user_id']:
+                Label(frame_mid, text=message['content'], anchor='e', width=100).pack()
+            else:
+                Label(frame_mid, text=message['content'], anchor='w', width=100).pack()
         frame_mid.pack()
 
-
         frame_bottom = Frame(frame2)
-        Text(frame_bottom, width=45, height=2).pack(side='left')
-        Button(frame_bottom, command=lambda: (), text='send').pack(side='right')
+        text_field = Text(frame_bottom, width=45, height=2)
+        text_field.pack(side='left')
+        Button(frame_bottom, command=lambda: (self.send_message(chat_id, self.client.user_id, text_field.get(1.0, END)), frame2.destroy()), text='send').pack(side='right')
         frame_bottom.pack(side='bottom')
         frame2.pack(fill=Y, expand=1)
 
@@ -51,3 +57,25 @@ class DialogsPage:
         }
         self.client.broadcast.send_data(request)
         self.chats = self.client.broadcast.read_data()
+
+    def ask_history(self, chat_id):
+        request = {
+            'type': 'get_history',
+            'chat_id': 1  # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! HARD CODE
+        }
+        self.client.broadcast.send_data(request)
+        return self.client.broadcast.read_data()
+
+    def send_message(self, chat_id, user_id, content):
+        datetime = None
+        request = {
+            'type': 'send_message',
+            'chat_id': user_id,
+            'user_id': chat_id,
+            'content': content,
+            'datetime': datetime
+        }
+        self.client.broadcast.send_data(request)
+        response = self.client.broadcast.read_data()
+        self.open_chat(chat_id)
+

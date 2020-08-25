@@ -9,11 +9,12 @@ class Client:
     def __init__(self):
         self.broadcast = ClientBroadcastClass('127.0.0.1', 10001)
         self.logger = Logger("log.txt")
+        self.user_id = 2
 
 
 client = Client()
-# stat = AuthPage.show(client)
-stat = 0
+stat = AuthPage.show(client)
+
 if stat == 1:
     DialogsPage(client)
     pass
@@ -23,8 +24,6 @@ elif stat == 2:
         if AuthPage.show(client) == 1:
             DialogsPage(client)
             pass
-
-DialogsPage(client)
 
 
 

@@ -57,10 +57,39 @@ class Db:
         cursor.execute("SELECT * FROM chats")
 
         result = cursor.fetchall()
-        chats_dict = {}
+        chats_dict = []
         for chat in result:
             if chat[1] == user_id:
-                chats_dict.update({'user_id': chat[2]})
+                chats_dict.append({'user_id': chat[2]})
             if chat[2] == user_id:
-                chats_dict.update({'user_id': chat[1]})
+                chats_dict.append({'user_id': chat[1]})
         return chats_dict
+
+    def get_history(self, chat_id):
+        cursor = self.conn.cursor()
+        cursor.execute("SELECT * FROM messages")
+
+        result = cursor.fetchall()
+        mess_dict = []
+        for mess in result:
+            if mess[1] == chat_id:
+                mess_dict.append({
+                    'user_id': mess[2],
+                    'content': mess[3]
+                    })
+        return mess_dict
+
+    def send_message(self, chat_id, user_id, content, datetime):
+        query = "INSERT INTO messages(chat_id, user_id, content, time) VALUES(%s, %s, %s, %s)"
+
+        args = (chat_id, user_id, content, datetime)
+
+        cursor = self.conn.cursor()
+        cursor.execute(query, args)
+        if cursor.lastrowid:
+            print('last insert id', cursor.lastrowid)
+        else:
+            print('last insert id not found')
+        self.conn.commit()
+        cursor.close()
+        return 1
