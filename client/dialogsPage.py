@@ -6,7 +6,6 @@ class DialogsPage:
         self.client = client
         self.chats = []
         self.messages = []
-        self.ask_chats()
         self.root = Tk()
         self.root.title('Dialogs')
         self.root.geometry("{0}x{1}+{2}+{3}".format(400, 600, int((self.root.winfo_screenwidth() - 400)/2),
@@ -14,6 +13,7 @@ class DialogsPage:
         self.create_widgets()
 
     def create_widgets(self):
+        self.ask_chats()
         self.frame1 = Frame()
 
         frame_top = Frame(self.frame1)
@@ -89,7 +89,7 @@ class DialogsPage:
         Label(root2, text='Username: ').pack()
         entry_user = Entry(root2)
         entry_user.pack()
-        Button(root2, text='Start chatting', command=lambda: self.add_chat(entry_user.get())).pack()
+        Button(root2, text='Start chatting', command=lambda: (self.add_chat(entry_user.get()), root2.destroy())).pack()
         root2.mainloop()
 
     def add_chat(self, username):
@@ -100,3 +100,6 @@ class DialogsPage:
         }
         self.client.broadcast.send_data(request)
         response = self.client.broadcast.read_data()
+        if response['status'] == 'ok':
+
+            self.open_chat(response['chat_id'])

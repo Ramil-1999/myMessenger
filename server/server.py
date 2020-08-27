@@ -59,8 +59,10 @@ class Server(asyncio.Protocol):
             # отработка запроса на добавление нового чата
             elif request['type'] == 'add_chat':
                 result = self.add_chat(request['username'], request['user_id'])
-                if result == 1:
-                    response = {'status': 'ok'}
+                if result != 0:
+                    response = {'status': 'ok',
+                                'chat_id': result
+                        }
                 else:
                     response = {'status': 'error'}
 

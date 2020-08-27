@@ -103,7 +103,7 @@ class Db:
             cursor.execute(query, args)
             self.conn.commit()
             cursor.close()
-            return 1
+            return cursor.lastrowid
         else:
             return 0
 
