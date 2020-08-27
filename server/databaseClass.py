@@ -33,10 +33,10 @@ class Db:
         cursor.close()
         return 0, 0
 
-    def reg_user(self, username, hash):
+    def reg_user(self, username, hash, name, surname):
         query = "INSERT INTO users(username, hash) VALUES(%s,%s)"
 
-        args = ( username, hash)
+        args = (username, hash)
 
         res, _ = self.find_user(username)
         if res == 0:

@@ -32,7 +32,7 @@ class Server(asyncio.Protocol):
 
             # отработка запроса на регистрацию
             elif request['type'] == 'reg':
-                result = self.reg(request['username'], request['hash'])
+                result = self.reg(request['username'], request['hash'], request['name'], request['surname'])
                 if result == 1:
                     response = {'status': 'ok'}
                 else:
@@ -83,8 +83,8 @@ class Server(asyncio.Protocol):
             self.logger.logging('Database connection refused')
             return -1
 
-    def reg(self, username, hash):
-        result = self.db.reg_user(username, hash)
+    def reg(self, username, hash, name, surname):
+        result = self.db.reg_user(username, hash, name, surname)
         if result:
             return 1
         else:

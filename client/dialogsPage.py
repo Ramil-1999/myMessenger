@@ -101,5 +101,4 @@ class DialogsPage:
         self.client.broadcast.send_data(request)
         response = self.client.broadcast.read_data()
         if response['status'] == 'ok':
-
             self.open_chat(response['chat_id'])
