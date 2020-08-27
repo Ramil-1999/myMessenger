@@ -22,7 +22,7 @@ class Server(asyncio.Protocol):
             if request['type'] == 'auth':
                 result = self.auth(request)
                 if result == -1:
-                    response = {'status': 'username'}
+                    response = {'status': 'password'}
 
                 elif result == 0:
                     response = {'status': 'username'}

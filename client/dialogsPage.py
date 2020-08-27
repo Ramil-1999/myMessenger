@@ -15,6 +15,11 @@ class DialogsPage:
 
     def create_widgets(self):
         self.frame1 = Frame()
+
+        frame_top = Frame(self.frame1)
+        Button(frame_top, text='+', width=100, command=self.window_add_chat).pack()
+        frame_top.pack(side='top', expand=1)
+
         for chat in self.chats:
             Button(self.frame1, width='100', text=chat, command=lambda: self.open_chat(chat['chat_id']), height=3, anchor='w').pack(fill=X)
         self.frame1.pack()
@@ -76,3 +81,22 @@ class DialogsPage:
         response = self.client.broadcast.read_data()
         self.open_chat(chat_id)
 
+    def window_add_chat(self):
+        root2 = Toplevel()
+        root2.title('Create New Chat')
+        root2.geometry("{0}x{1}+{2}+{3}".format(200, 200, int((self.root.winfo_screenwidth() - 200) / 2),
+                                                int((self.root.winfo_screenheight() - 200) / 2)))
+        Label(root2, text='Username: ').pack()
+        entry_user = Entry(root2)
+        entry_user.pack()
+        Button(root2, text='Start chatting', command=lambda: self.add_chat(entry_user.get())).pack()
+        root2.mainloop()
+
+    def add_chat(self, username):
+        request = {
+            'type': 'add_chat',
+            'username': username,
+            'user_id': self.client.user_id
+        }
+        self.client.broadcast.send_data(request)
+        response = self.client.broadcast.read_data()
