@@ -15,10 +15,8 @@ class DialogsPage:
 
     def create_widgets(self):
         self.frame1 = Frame()
-
         for chat in self.chats:
-            Button(self.frame1, width='100', text=chat, command=lambda: self.open_chat(chat['user_id']), height=3, anchor='w').pack(fill=X)
-            Button(self.frame1, width='100', text=chat, command=lambda: self.open_chat(chat['user_id']), height=3, anchor='w').pack(fill=X)
+            Button(self.frame1, width='100', text=chat, command=lambda: self.open_chat(chat['chat_id']), height=3, anchor='w').pack(fill=X)
         self.frame1.pack()
         self.root.mainloop()
 
@@ -36,8 +34,7 @@ class DialogsPage:
         frame_mid = Frame(frame2)
         self.messages = self.ask_history(chat_id)
         for message in self.messages:
-            print('inside loop')
-            if 1 == message['user_id']:
+            if self.client.user_id == message['user_id']:
                 Label(frame_mid, text=message['content'], anchor='e', width=100).pack()
             else:
                 Label(frame_mid, text=message['content'], anchor='w', width=100).pack()
@@ -53,7 +50,7 @@ class DialogsPage:
     def ask_chats(self):
         request = {
             'type': 'get_chats',
-            'user_id': 2  # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! HARD CODE
+            'user_id': self.client.user_id  # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! HARD CODE
         }
         self.client.broadcast.send_data(request)
         self.chats = self.client.broadcast.read_data()
@@ -61,7 +58,7 @@ class DialogsPage:
     def ask_history(self, chat_id):
         request = {
             'type': 'get_history',
-            'chat_id': 1  # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! HARD CODE
+            'chat_id': chat_id  # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! HARD CODE
         }
         self.client.broadcast.send_data(request)
         return self.client.broadcast.read_data()
@@ -70,8 +67,8 @@ class DialogsPage:
         datetime = None
         request = {
             'type': 'send_message',
-            'chat_id': user_id,
-            'user_id': chat_id,
+            'chat_id': chat_id,
+            'user_id': user_id,
             'content': content,
             'datetime': datetime
         }

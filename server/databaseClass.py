@@ -29,9 +29,9 @@ class Db:
         for key in result:
             if key[1] == username:
                 cursor.close()
-                return key[2]
+                return key[2], key[0]
         cursor.close()
-        return 0
+        return 0, 0
 
     def reg_user(self, username, hash):
         query = "INSERT INTO users(id, username, hash) VALUES(%s,%s)"
@@ -60,9 +60,13 @@ class Db:
         chats_dict = []
         for chat in result:
             if chat[1] == user_id:
-                chats_dict.append({'user_id': chat[2]})
-            if chat[2] == user_id:
-                chats_dict.append({'user_id': chat[1]})
+                chats_dict.append({
+                    'chat_id': chat[0],
+                    'user_id': chat[2]})
+            elif chat[2] == user_id:
+                chats_dict.append({
+                    'chat_id': chat[0],
+                    'user_id': chat[1]})
         return chats_dict
 
     def get_history(self, chat_id):

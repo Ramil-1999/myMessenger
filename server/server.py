@@ -21,12 +21,14 @@ class Server(asyncio.Protocol):
             # отработка запроса на авторизацию
             if request['type'] == 'auth':
                 result = self.auth(request)
-                if result == 1:
-                    response = {'status': 'ok'}
-                elif result == -1:
-                    response = {'status': 'password'}
-                else:
+                if result == -1:
                     response = {'status': 'username'}
+
+                elif result == 0:
+                    response = {'status': 'username'}
+                else:
+                    response = {'status': 'ok',
+                                'user_id': result}
 
             # отработка запроса на регистрацию
             elif request['type'] == 'reg':
@@ -60,9 +62,9 @@ class Server(asyncio.Protocol):
 
     def auth(self, message):
         try:
-            result = self.db.find_user(message['username'])
+            result,  user_id = self.db.find_user(message['username'])
             if result == message['hash']:
-                return 1
+                return user_id
             elif result == 0:
                 return 0
             else:

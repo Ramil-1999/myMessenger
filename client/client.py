@@ -9,7 +9,7 @@ class Client:
     def __init__(self):
         self.broadcast = ClientBroadcastClass('127.0.0.1', 10001)
         self.logger = Logger("log.txt")
-        self.user_id = 2
+        self.user_id = None
 
 
 client = Client()

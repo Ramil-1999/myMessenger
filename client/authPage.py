@@ -55,6 +55,7 @@ class AuthPage:
         if status['status'] == 'ok':
             self.root.destroy()
             self.status = 1
+            self.client.user_id = status['user_id']
         elif status['status'] == 'password':
             self.label['text'] = '!wrong password'
         elif status['status'] == 'username':
