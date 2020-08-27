@@ -91,3 +91,30 @@ class Db:
         self.conn.commit()
         cursor.close()
         return 1
+
+    def add_chat(self, username, user_id):
+        query = "INSERT INTO chats(f_user_id, s_user_id) VALUES(%s, %s)"
+
+        s_user_id = self.get_user_id(username)
+
+        if s_user_id:
+            args = (user_id, s_user_id)
+            cursor = self.conn.cursor()
+            cursor.execute(query, args)
+            self.conn.commit()
+            cursor.close()
+            return 1
+        else:
+            return 0
+
+    def get_user_id(self, username):
+        cursor = self.conn.cursor()
+        cursor.execute("SELECT * FROM users")
+
+        result = cursor.fetchall()
+        for key in result:
+            if key[1] == username:
+                cursor.close()
+                return key[0]
+        cursor.close()
+        return 0
