@@ -19,15 +19,13 @@ class DialogsPage:
         frame_top = Frame(self.frame1)
         Button(frame_top, text='+', width=100, command=self.window_add_chat).pack()
         frame_top.pack(side='top', expand=1)
-
         for chat in self.chats:
-            Button(self.frame1, width='100', text=chat, command=lambda: self.open_chat(chat['chat_id']), height=3, anchor='w').pack(fill=X)
+            Button(self.frame1, width='100', text=chat, command=lambda n=chat['chat_id']: self.open_chat(n), height=3, anchor='w').pack(fill=X)
         self.frame1.pack()
         self.root.mainloop()
 
     def open_chat(self, chat_id):
         self.frame1.destroy()
-
         # верстка экрана чата
         frame2 = Frame(self.root)
         frame_top = Frame(frame2)
@@ -55,7 +53,7 @@ class DialogsPage:
     def ask_chats(self):
         request = {
             'type': 'get_chats',
-            'user_id': self.client.user_id  # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! HARD CODE
+            'user_id': self.client.user_id
         }
         self.client.broadcast.send_data(request)
         self.chats = self.client.broadcast.read_data()
@@ -63,10 +61,11 @@ class DialogsPage:
     def ask_history(self, chat_id):
         request = {
             'type': 'get_history',
-            'chat_id': chat_id  # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! HARD CODE
+            'chat_id': chat_id
         }
         self.client.broadcast.send_data(request)
-        return self.client.broadcast.read_data()
+        result = self.client.broadcast.read_data()
+        return result
 
     def send_message(self, chat_id, user_id, content):
         datetime = None
@@ -102,3 +101,4 @@ class DialogsPage:
         response = self.client.broadcast.read_data()
         if response['status'] == 'ok':
             self.open_chat(response['chat_id'])
+

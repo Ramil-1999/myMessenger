@@ -19,7 +19,8 @@ def read_db_config(filename='config.ini', section='mysql'):
 
 class Db:
     def __init__(self):
-        self.conn = MySQLConnection(**read_db_config())
+        self.db_config = read_db_config()
+        self.conn = MySQLConnection(**self.db_config)
 
     def find_user(self, username):
         cursor = self.conn.cursor()
@@ -67,10 +68,13 @@ class Db:
         return chats_dict
 
     def get_history(self, chat_id):
+        self.conn.close()
+        self.conn = MySQLConnection(**self.db_config)
         cursor = self.conn.cursor()
         cursor.execute("SELECT * FROM messages")
 
         result = cursor.fetchall()
+        print(result)
         mess_dict = []
         for mess in result:
             if mess[1] == chat_id:
