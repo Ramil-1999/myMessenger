@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter.scrolledtext import *
+import scrollableFrame
 
 
 class DialogsPage:
@@ -21,7 +22,7 @@ class DialogsPage:
         Button(frame_top, text='+', width=100, command=self.window_add_chat).pack()
         frame_top.pack(side='top')
 
-        frame_main = ScrollableFrame(self.frame1)
+        frame_main = scrollableFrame.ScrollableFrame(self.frame1)
 
         for chat in self.chats:
             Button(frame_main.scrollable_frame, width='100', text=chat, command=lambda n=chat['chat_id']: self.open_chat(n), height=3, anchor='w').pack(fill=X)
@@ -111,23 +112,3 @@ class DialogsPage:
 
 
 
-class ScrollableFrame(Frame):
-    def __init__(self, container, *args, **kwargs):
-        super().__init__(container, *args, **kwargs)
-        canvas = Canvas(self)
-        scrollbar = Scrollbar(self, orient="vertical", command=canvas.yview)
-        self.scrollable_frame = Frame(canvas)
-
-        self.scrollable_frame.bind(
-            "<Configure>",
-            lambda e: canvas.configure(
-                scrollregion=canvas.bbox("all")
-            )
-        )
-
-        canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw")
-
-        canvas.configure(yscrollcommand=scrollbar.set)
-
-        canvas.pack(side="left", fill=BOTH)
-        scrollbar.pack(side="right", fill=Y)
