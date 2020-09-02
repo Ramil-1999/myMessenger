@@ -12,6 +12,7 @@ class Client:
         self.user_id = None
 
 
+
 client = Client()
 stat = AuthPage.show(client)
 

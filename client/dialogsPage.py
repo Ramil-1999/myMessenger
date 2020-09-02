@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter.scrolledtext import *
 
 
 class DialogsPage:
@@ -18,10 +19,15 @@ class DialogsPage:
 
         frame_top = Frame(self.frame1)
         Button(frame_top, text='+', width=100, command=self.window_add_chat).pack()
-        frame_top.pack(side='top', expand=1)
+        frame_top.pack(side='top')
+
+        frame_main = ScrollableFrame(self.frame1)
+
         for chat in self.chats:
-            Button(self.frame1, width='100', text=chat, command=lambda n=chat['chat_id']: self.open_chat(n), height=3, anchor='w').pack(fill=X)
-        self.frame1.pack()
+            Button(frame_main.scrollable_frame, width='100', text=chat, command=lambda n=chat['chat_id']: self.open_chat(n), height=3, anchor='w').pack(fill=X)
+
+        frame_main.pack(fill=BOTH, expand=1)
+        self.frame1.pack(expand=1, fill=BOTH)
         self.root.mainloop()
 
     def open_chat(self, chat_id):
@@ -44,8 +50,9 @@ class DialogsPage:
         frame_mid.pack()
 
         frame_bottom = Frame(frame2)
-        text_field = Text(frame_bottom, width=45, height=2)
+        text_field = ScrolledText(frame_bottom, width=40, height=2)
         text_field.pack(side='left')
+
         Button(frame_bottom, command=lambda: (self.send_message(chat_id, self.client.user_id, text_field.get(1.0, END)), frame2.destroy()), text='send').pack(side='right')
         frame_bottom.pack(side='bottom')
         frame2.pack(fill=Y, expand=1)
@@ -102,3 +109,25 @@ class DialogsPage:
         if response['status'] == 'ok':
             self.open_chat(response['chat_id'])
 
+
+
+class ScrollableFrame(Frame):
+    def __init__(self, container, *args, **kwargs):
+        super().__init__(container, *args, **kwargs)
+        canvas = Canvas(self)
+        scrollbar = Scrollbar(self, orient="vertical", command=canvas.yview)
+        self.scrollable_frame = Frame(canvas)
+
+        self.scrollable_frame.bind(
+            "<Configure>",
+            lambda e: canvas.configure(
+                scrollregion=canvas.bbox("all")
+            )
+        )
+
+        canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw")
+
+        canvas.configure(yscrollcommand=scrollbar.set)
+
+        canvas.pack(side="left", fill=BOTH)
+        scrollbar.pack(side="right", fill=Y)
