@@ -61,8 +61,10 @@ class Server(asyncio.Protocol):
                 result = self.add_chat(request['username'], request['user_id'])
                 if result != 0:
                     response = {'status': 'ok',
-                                'chat_id': result
-                        }
+                                'chat_id': result[0],
+                                'name': result[1],
+                                'surname': result[2]
+                    }
                 else:
                     response = {'status': 'error'}
 

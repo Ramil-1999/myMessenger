@@ -36,6 +36,7 @@ class DialogsPage:
         chat_id = chat['chat_id']
         name = chat['name']
         surname = chat['surname']
+
         self.frame1.destroy()
         # верстка экрана чата
         frame2 = Frame(self.root)
@@ -58,7 +59,7 @@ class DialogsPage:
         text_field = ScrolledText(frame_bottom, width=40, height=2)
         text_field.pack(side='left')
 
-        Button(frame_bottom, command=lambda: (self.send_message(chat_id, self.client.user_id, text_field.get(1.0, END)), frame2.destroy()), text='send').pack(side='right')
+        Button(frame_bottom, command=lambda: (self.send_message(chat_id, name, surname,  self.client.user_id, text_field.get(1.0, END)), frame2.destroy()), text='send').pack(side='right')
         frame_bottom.pack(side='bottom')
         frame2.pack(fill=Y, expand=1)
 
@@ -79,7 +80,7 @@ class DialogsPage:
         result = self.client.broadcast.read_data()
         return result
 
-    def send_message(self, chat_id, user_id, content):
+    def send_message(self, chat_id, name, surname, user_id, content):
         datetime = None
         request = {
             'type': 'send_message',
@@ -90,7 +91,12 @@ class DialogsPage:
         }
         self.client.broadcast.send_data(request)
         response = self.client.broadcast.read_data()
-        self.open_chat(chat_id)
+        chat = {
+            'chat_id': chat_id,
+            'name': name,
+            'surname': surname
+        }
+        self.open_chat(chat)
 
     def window_add_chat(self):
         root2 = Toplevel()
@@ -112,7 +118,7 @@ class DialogsPage:
         self.client.broadcast.send_data(request)
         response = self.client.broadcast.read_data()
         if response['status'] == 'ok':
-            self.open_chat(response['chat_id'])
+            self.open_chat(response)
 
     def ask_user_data(self, user_id):
         request = {

@@ -111,11 +111,12 @@ class Db:
 
         if s_user_id:
             args = (user_id, s_user_id)
+            name, surname =  self.get_user_data(user_id)
             cursor = self.conn.cursor()
             cursor.execute(query, args)
             self.conn.commit()
             cursor.close()
-            return cursor.lastrowid
+            return cursor.lastrowid, name, surname
         else:
             return 0
 
