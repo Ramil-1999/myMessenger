@@ -5,6 +5,7 @@ class AuthPage:
     def __init__(self, client):
         self.client = client
         self.root = Tk()
+        self.root.resizable(width=FALSE, height=FALSE)
         self.status = 0
 
     def create_widgets(self):

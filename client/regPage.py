@@ -5,12 +5,13 @@ from tkinter.ttk import *
 class RegPage:
     def __init__(self, client):
         self.root = Tk()
+        self.root.resizable(width=FALSE, height=FALSE)
         self.client = client
         self.status = False
 
     def create_widgets(self):
-        self.root.geometry("{0}x{1}+{2}+{3}".format(200, 200, int((self.root.winfo_screenwidth() - 400) / 2),
-                                                    int((self.root.winfo_screenheight() - 400) / 2)))
+        self.root.geometry("{0}x{1}+{2}+{3}".format(300, 500, int((self.root.winfo_screenwidth() - 300) / 2),
+                                                    int((self.root.winfo_screenheight() - 500) / 2)))
         self.root.title('Registration')
         frame = Frame(self.root)
         Label(frame, text="Enter your login:", padding=3).pack()

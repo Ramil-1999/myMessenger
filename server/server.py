@@ -50,7 +50,7 @@ class Server(asyncio.Protocol):
 
             # отработка запроса на отправку сообщения пользователем
             elif request['type'] == 'send_message':
-                result = self.send_message(request['chat_id'], request['user_id'], request['content'], request['datetime'])
+                result = self.send_message(request['chat_id'], request['user_id'], request['content'], request['time'])
                 if result == 1:
                     response = {'status': 'ok'}
                 else:
@@ -122,3 +122,4 @@ class Server(asyncio.Protocol):
     def get_user_data(self, user_id):
         result = self.db.get_user_data(user_id)
         return result
+

@@ -2,6 +2,7 @@ from mysql.connector import MySQLConnection, Error
 from configparser import ConfigParser
 
 
+# функция чтения конфигурации БД из файла config.ini
 def read_db_config(filename='config.ini', section='mysql'):
     parser = ConfigParser()
     parser.read(filename)
@@ -17,6 +18,7 @@ def read_db_config(filename='config.ini', section='mysql'):
     return db
 
 
+# класс для взаимодействия с базой данных
 class Db:
     def __init__(self):
         self.db_config = read_db_config()
@@ -60,20 +62,32 @@ class Db:
         for chat in result:
             if chat[1] == user_id:
                 name, surname = self.get_user_data(chat[2])
-                chats_dict.append({
+                temp = self.get_last_message(chat[0])
+                sss = {
                     'chat_id': chat[0],
                     'user_id': chat[2],
                     'name': name,
                     'surname': surname
-                })
+                }
+                print("sss: ", sss)
+                print("temp: ", temp)
+                sss.update(temp)
+                print(sss)
+                chats_dict.append(sss)
             elif chat[2] == user_id:
                 name, surname = self.get_user_data(chat[1])
-                chats_dict.append({
+                temp = self.get_last_message(chat[0])
+                sss = {
                     'chat_id': chat[0],
                     'user_id': chat[1],
                     'name': name,
                     'surname': surname
-                })
+                }
+                print("sss: ", sss)
+                print("temp: ", temp)
+                sss.update(temp)
+                print(sss)
+                chats_dict.append(sss)
         return chats_dict
 
     def get_history(self, chat_id):
@@ -154,3 +168,24 @@ class Db:
                 return key[1], key[2]
         cursor.close()
         return 0
+
+    def get_last_message(self, chat_id):
+        self.conn.close()
+        self.conn = MySQLConnection(**self.db_config)
+        cursor = self.conn.cursor()
+        cursor.execute("SELECT * FROM messages")
+
+        result = cursor.fetchall()
+        result.reverse()
+        for mess in result:
+            if mess[1] == chat_id:
+                return {
+                    'sender_id': mess[2],
+                    'content': mess[3],
+                    'time': str(mess[4])
+                }
+        return {
+            'sender_id': 0,
+            'content': 0,
+            'time': 0
+        }
