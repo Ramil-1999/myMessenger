@@ -36,7 +36,6 @@ class Db:
 
     def reg_user(self, username, hash, name, surname):
         query = "INSERT INTO users(username, hash) VALUES(%s,%s)"
-
         args = (username, hash)
 
         res, _ = self.find_user(username)
@@ -46,7 +45,9 @@ class Db:
             cursor.execute(query, args)
             self.conn.commit()
             cursor.close()
-            return 1
+            user_id = self.get_user_id(username)
+            if self.add_user_data(user_id, name, surname):
+                return 1
         else:
             return 0
 
@@ -74,7 +75,6 @@ class Db:
         cursor.execute("SELECT * FROM messages")
 
         result = cursor.fetchall()
-        print(result)
         mess_dict = []
         for mess in result:
             if mess[1] == chat_id:
@@ -120,5 +120,28 @@ class Db:
             if key[1] == username:
                 cursor.close()
                 return key[0]
+        cursor.close()
+        return 0
+
+    def add_user_data(self, user_id, name, surname):
+        query = "INSERT INTO user_data(user_id, name, surname) VALUES(%s, %s, %s)"
+
+        args = (user_id, name, surname)
+
+        cursor = self.conn.cursor()
+        cursor.execute(query, args)
+        self.conn.commit()
+        cursor.close()
+        return 1
+
+    def get_user_data(self, user_id):
+        cursor = self.conn.cursor()
+        cursor.execute("SELECT * FROM user_data")
+
+        result = cursor.fetchall()
+        for key in result:
+            if key[0] == user_id:
+                cursor.close()
+                return key[1], key[2]
         cursor.close()
         return 0

@@ -66,6 +66,17 @@ class Server(asyncio.Protocol):
                 else:
                     response = {'status': 'error'}
 
+            # отработка запроса на получение информации о пользователе
+            elif request['type'] == 'get_user_data':
+                result = self.get_user_data(request['user_id'])
+                if result != 0:
+                    response = {'status': 'ok',
+                                'name': result[0],
+                                'surname': result[1]
+                        }
+                else:
+                    response = {'status': 'error'}
+
         except (ValueError, UnicodeDecodeError, IndexError):
             print('error')
         self.transport.write(json.dumps(response).encode())
@@ -104,4 +115,8 @@ class Server(asyncio.Protocol):
 
     def add_chat(self, username, user_id):
         result = self.db.add_chat(username, user_id)
+        return result
+
+    def get_user_data(self, user_id):
+        result = self.db.get_user_data(user_id)
         return result

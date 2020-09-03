@@ -26,8 +26,8 @@ class DialogsPage:
         frame_main = scrollableFrame.ScrollableFrame(self.frame1, 0)
 
         for chat in self.chats:
-            Button(frame_main.scrollable_frame, width='100', text=chat, command=lambda n=chat['chat_id']: self.open_chat(n), height=3, anchor='w').pack(fill=X)
-
+            Button(frame_main.scrollable_frame, width='100', text=self.ask_user_data(chat['user_id']),
+                   command=lambda n=chat['chat_id']: self.open_chat(n), height=3, anchor='w').pack(fill=X)
         frame_main.pack(fill=BOTH, expand=1)
         self.frame1.pack(expand=1, fill=BOTH)
         self.root.mainloop()
@@ -111,5 +111,13 @@ class DialogsPage:
         if response['status'] == 'ok':
             self.open_chat(response['chat_id'])
 
-
+    def ask_user_data(self, user_id):
+        request = {
+            'type': 'get_user_data',
+            'user_id': user_id
+        }
+        self.client.broadcast.send_data(request)
+        response = self.client.broadcast.read_data()
+        if response['status'] == 'ok':
+            return response['name'], response['surname']
 

@@ -20,6 +20,6 @@ CREATE TABLE `messages` (
 
 CREATE TABLE `user_data` (
     `user_id` int(11) NOT NULL PRIMARY KEY,
-    `name`
-    `surname`
+    `name` TEXT,
+    `surname` TEXT
 )
