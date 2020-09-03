@@ -111,7 +111,7 @@ class Db:
 
         if s_user_id:
             args = (user_id, s_user_id)
-            name, surname =  self.get_user_data(user_id)
+            name, surname = self.get_user_data(s_user_id)
             cursor = self.conn.cursor()
             cursor.execute(query, args)
             self.conn.commit()

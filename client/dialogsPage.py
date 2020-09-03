@@ -33,6 +33,7 @@ class DialogsPage:
         self.root.mainloop()
 
     def open_chat(self, chat):
+        print(chat)
         chat_id = chat['chat_id']
         name = chat['name']
         surname = chat['surname']
