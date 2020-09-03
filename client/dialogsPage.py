@@ -26,20 +26,23 @@ class DialogsPage:
         frame_main = scrollableFrame.ScrollableFrame(self.frame1, 0)
 
         for chat in self.chats:
-            Button(frame_main.scrollable_frame, width='100', text=self.ask_user_data(chat['user_id']),
-                   command=lambda n=chat['chat_id']: self.open_chat(n), height=3, anchor='w').pack(fill=X)
+            Button(frame_main.scrollable_frame, width='100', text='{0} {1}'.format(chat['name'], chat['surname']),
+                   command=lambda n=chat: self.open_chat(n), height=3, anchor='w').pack(fill=X)
         frame_main.pack(fill=BOTH, expand=1)
         self.frame1.pack(expand=1, fill=BOTH)
         self.root.mainloop()
 
-    def open_chat(self, chat_id):
+    def open_chat(self, chat):
+        chat_id = chat['chat_id']
+        name = chat['name']
+        surname = chat['surname']
         self.frame1.destroy()
         # верстка экрана чата
         frame2 = Frame(self.root)
         frame_top = Frame(frame2)
         Button(frame_top, text='<--', width=10, command=lambda: (frame2.destroy(), self.create_widgets()))\
             .pack(side='left')
-        Label(frame_top, text='user_name', width=90).pack(side='right')
+        Label(frame_top, text='{0} {1}'.format(name, surname), width=90).pack(side='right')
         frame_top.pack(side='top')
 
         frame_mid = scrollableFrame.ScrollableFrame(frame2, 1)

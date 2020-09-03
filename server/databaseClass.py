@@ -59,13 +59,21 @@ class Db:
         chats_dict = []
         for chat in result:
             if chat[1] == user_id:
+                name, surname = self.get_user_data(chat[2])
                 chats_dict.append({
                     'chat_id': chat[0],
-                    'user_id': chat[2]})
+                    'user_id': chat[2],
+                    'name': name,
+                    'surname': surname
+                })
             elif chat[2] == user_id:
+                name, surname = self.get_user_data(chat[1])
                 chats_dict.append({
                     'chat_id': chat[0],
-                    'user_id': chat[1]})
+                    'user_id': chat[1],
+                    'name': name,
+                    'surname': surname
+                })
         return chats_dict
 
     def get_history(self, chat_id):
