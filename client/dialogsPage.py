@@ -9,6 +9,7 @@ class DialogsPage:
         self.chats = []
         self.messages = []
         self.root = Tk()
+        self.root.resizable(width=FALSE, height=FALSE)
         self.root.title('Dialogs')
         self.root.geometry("{0}x{1}+{2}+{3}".format(400, 600, int((self.root.winfo_screenwidth() - 400)/2),
                                                     int((self.root.winfo_screenheight() - 600)/2)))
@@ -22,7 +23,7 @@ class DialogsPage:
         Button(frame_top, text='+', width=100, command=self.window_add_chat).pack()
         frame_top.pack(side='top')
 
-        frame_main = scrollableFrame.ScrollableFrame(self.frame1)
+        frame_main = scrollableFrame.ScrollableFrame(self.frame1, 0)
 
         for chat in self.chats:
             Button(frame_main.scrollable_frame, width='100', text=chat, command=lambda n=chat['chat_id']: self.open_chat(n), height=3, anchor='w').pack(fill=X)
@@ -36,19 +37,19 @@ class DialogsPage:
         # верстка экрана чата
         frame2 = Frame(self.root)
         frame_top = Frame(frame2)
-        Button(frame_top, text='<-', width=10, command=lambda: (frame2.destroy(), self.create_widgets()))\
+        Button(frame_top, text='<--', width=10, command=lambda: (frame2.destroy(), self.create_widgets()))\
             .pack(side='left')
         Label(frame_top, text='user_name', width=90).pack(side='right')
         frame_top.pack(side='top')
 
-        frame_mid = Frame(frame2)
+        frame_mid = scrollableFrame.ScrollableFrame(frame2, 1)
         self.messages = self.ask_history(chat_id)
         for message in self.messages:
             if self.client.user_id == message['user_id']:
-                Label(frame_mid, text=message['content'], anchor='e', width=100).pack()
+                Label(frame_mid.scrollable_frame, text=message['content'], anchor='e', width=50).pack()
             else:
-                Label(frame_mid, text=message['content'], anchor='w', width=100).pack()
-        frame_mid.pack()
+                Label(frame_mid.scrollable_frame, text=message['content'], anchor='w', width=55).pack()
+        frame_mid.pack(fill=BOTH, expand=1)
 
         frame_bottom = Frame(frame2)
         text_field = ScrolledText(frame_bottom, width=40, height=2)

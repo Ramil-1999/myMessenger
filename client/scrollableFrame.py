@@ -2,10 +2,11 @@ from tkinter import *
 
 
 class ScrollableFrame(Frame):
-    def __init__(self, container, *args, **kwargs):
+    def __init__(self, container, flag, *args, **kwargs):
         super().__init__(container, *args, **kwargs)
         canvas = Canvas(self)
-        scrollbar = Scrollbar(self, orient="vertical", command=canvas.yview)
+        self.flag = flag
+        scrollbar = Scrollbar(self, orient="vertical", command=canvas.yview, width=15)
         self.scrollable_frame = Frame(canvas)
 
         self.scrollable_frame.bind(
@@ -14,9 +15,10 @@ class ScrollableFrame(Frame):
                 scrollregion=canvas.bbox("all")
             )
         )
-
-        canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw")
-
+        if self.flag == 1:
+            canvas.create_window((5, 5), window=self.scrollable_frame, anchor="sw")
+        else:
+            canvas.create_window((5, 5), window=self.scrollable_frame, anchor="nw")
         canvas.configure(yscrollcommand=scrollbar.set)
 
         canvas.pack(side="left", fill=BOTH)
