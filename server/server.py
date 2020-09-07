@@ -15,9 +15,11 @@ class Server(asyncio.Protocol):
 
     def data_received(self, data):
         """Метод data_received вызывается при получении данных в сокете"""
+        print('получили')
+        response = {'status': 'error'}
         try:
             request = json.loads(data.decode())
-
+            print('request:', request)
             # отработка запроса на авторизацию
             if request['type'] == 'auth':
                 result = self.auth(request)
@@ -81,6 +83,7 @@ class Server(asyncio.Protocol):
 
         except (ValueError, UnicodeDecodeError, IndexError):
             print('error')
+        print('отработали')
         self.transport.write(json.dumps(response).encode())
 
     def auth(self, message):

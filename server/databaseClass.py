@@ -69,10 +69,7 @@ class Db:
                     'name': name,
                     'surname': surname
                 }
-                print("sss: ", sss)
-                print("temp: ", temp)
                 sss.update(temp)
-                print(sss)
                 chats_dict.append(sss)
             elif chat[2] == user_id:
                 name, surname = self.get_user_data(chat[1])
@@ -83,10 +80,7 @@ class Db:
                     'name': name,
                     'surname': surname
                 }
-                print("sss: ", sss)
-                print("temp: ", temp)
                 sss.update(temp)
-                print(sss)
                 chats_dict.append(sss)
         return chats_dict
 

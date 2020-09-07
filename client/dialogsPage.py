@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter.scrolledtext import *
 import scrollableFrame
-from datetime import datetime
+import threading
 
 
 # класс страницы всех чатов
@@ -19,7 +19,7 @@ class DialogsPage:
 
     # создание страницы списка всех чатов данного пользователя
     def create_widgets(self):
-        self.ask_chats()
+        self.chats = self.client.ask_chats()
         self.frame1 = Frame()
 
         frame_top = Frame(self.frame1)
@@ -32,18 +32,24 @@ class DialogsPage:
         for chat in self.chats:
             txt = self.make_text_for_button(chat)
             Button(frame_main.scrollable_frame, width='100', text=txt,
-                   command=lambda n=chat: self.open_chat(n), height=4, anchor='w').pack(fill=X)
+                   command=lambda n=chat: self.goHead(n), height=4, anchor='w').pack(fill=X)
         frame_main.pack(fill=BOTH, expand=1)
         self.frame1.pack(expand=1, fill=BOTH)
         self.root.mainloop()
 
-    # создание страницы открытого чата
+    def goHead(self, chat):
+        self.frame1.destroy()
+        self.open_chat(chat)
+
+        rcv = threading.Thread(target=self.receive)
+        rcv.start()
+
+        # создание страницы открытого чата
     def open_chat(self, chat):
-        chat_id = chat['chat_id']
-        name = chat['name']
+        self.chat_id = chat['chat_id']
+        self.name = chat['name']
         surname = chat['surname']
 
-        self.frame1.destroy()
         # верстка экрана чата
         frame2 = Frame(self.root)
 
@@ -51,62 +57,46 @@ class DialogsPage:
         frame_top = Frame(frame2)
         Button(frame_top, text='<--', width=10, command=lambda: (frame2.destroy(), self.create_widgets()))\
             .pack(side='left')
-        Label(frame_top, text='{0} {1}'.format(name, surname), width=90).pack(side='right')
+        Label(frame_top, text='{0} {1}'.format(self.name, surname), width=90).pack(side='right')
         frame_top.pack(side='top')
 
         # фрейм в котором отображаются сообщения
-        frame_mid = scrollableFrame.ScrollableFrame(frame2, 1)
-        self.messages = self.ask_history(chat_id)
-        for message in self.messages:
-            if self.client.user_id == message['user_id']:
-                Label(frame_mid.scrollable_frame, text=message['content'], anchor='e', width=50).pack()
-            else:
-                Label(frame_mid.scrollable_frame, text=message['content'], anchor='w', width=55).pack()
+        frame_mid = Frame(frame2)
+        self.messages = self.client.ask_history(self.chat_id)
+        self.chat_field = ScrolledText(frame_mid)
+        self.chat_field.see(END)
+        self.show_messages()
+        self.chat_field.pack(fill=BOTH, expand=1)
         frame_mid.pack(fill=BOTH, expand=1)
 
         # фрейм-хвост
         frame_bottom = Frame(frame2)
-        text_field = ScrolledText(frame_bottom, width=40, height=2)
-        text_field.pack(side='left')
-
-        Button(frame_bottom, command=lambda: (self.send_message(chat_id, name, surname,  self.client.user_id, text_field.get(1.0, END)), frame2.destroy()), text='send').pack(side='right')
+        self.text_field = ScrolledText(frame_bottom, width=40, height=2)
+        self.text_field.pack(side='left')
+        Button(frame_bottom, command=lambda: self.client.send_message(self.chat_id, self.client.user_id,
+                                                                      self.text_field.get(1.0, END)),
+               text='send').pack(side='right')
         frame_bottom.pack(side='bottom')
         frame2.pack(fill=Y, expand=1)
 
-    def ask_chats(self):
-        request = {
-            'type': 'get_chats',
-            'user_id': self.client.user_id
-        }
-        self.client.broadcast.send_data(request)
-        self.chats = self.client.broadcast.read_data()
+    def show_messages(self):
+        self.chat_field.delete(1.0, END)
+        for message in self.messages:
+            if self.client.user_id == message['user_id']:
+                self.chat_field.insert(END, '{0}: {1}'.format('You', message['content']))
+            else:
+                self.chat_field.insert(END, '{0}: {1}'.format(self.name, message['content']))
 
-    def ask_history(self, chat_id):
-        request = {
-            'type': 'get_history',
-            'chat_id': chat_id
-        }
-        self.client.broadcast.send_data(request)
-        result = self.client.broadcast.read_data()
-        return result
+    def receive(self):
+        while True:
+            try:
+                new_history = self.client.ask_history(self.chat_id)
+                if new_history != self.messages:
+                    self.messages = new_history
+                    self.show_messages()
 
-    def send_message(self, chat_id, name, surname, user_id, content):
-        time = datetime.now()
-        request = {
-            'type': 'send_message',
-            'chat_id': chat_id,
-            'user_id': user_id,
-            'content': content,
-            'time': str(time)
-        }
-        self.client.broadcast.send_data(request)
-        response = self.client.broadcast.read_data()
-        chat = {
-            'chat_id': chat_id,
-            'name': name,
-            'surname': surname
-        }
-        self.open_chat(chat)
+            except:
+                pass
 
     def window_add_chat(self):
         root2 = Toplevel()
@@ -116,29 +106,9 @@ class DialogsPage:
         Label(root2, text='Username: ').pack()
         entry_user = Entry(root2)
         entry_user.pack()
-        Button(root2, text='Start chatting', command=lambda: (self.add_chat(entry_user.get()), root2.destroy())).pack()
+        Button(root2, text='Start chatting', command=lambda: (self.client.add_chat(entry_user.get()), root2.destroy()))\
+            .pack()
         root2.mainloop()
-
-    def add_chat(self, username):
-        request = {
-            'type': 'add_chat',
-            'username': username,
-            'user_id': self.client.user_id
-        }
-        self.client.broadcast.send_data(request)
-        response = self.client.broadcast.read_data()
-        if response['status'] == 'ok':
-            self.open_chat(response)
-
-    def ask_user_data(self, user_id):
-        request = {
-            'type': 'get_user_data',
-            'user_id': user_id
-        }
-        self.client.broadcast.send_data(request)
-        response = self.client.broadcast.read_data()
-        if response['status'] == 'ok':
-            return response['name'], response['surname']
 
     def make_text_for_button(self, chat):
         if chat['sender_id'] != 0:
