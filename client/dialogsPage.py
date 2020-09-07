@@ -20,19 +20,29 @@ class DialogsPage:
     # создание страницы списка всех чатов данного пользователя
     def create_widgets(self):
         self.chats = self.client.ask_chats()
-        self.frame1 = Frame()
+        self.frame1 = Frame(self.root, bg='gray25')
 
-        frame_top = Frame(self.frame1)
-        Button(frame_top, text='+', width=100, command=self.window_add_chat).pack()
-        frame_top.pack(side='top')
+        frame_top = Frame(self.frame1, bg='gray25')
+        Button(frame_top, text='+',
+               width=100,
+               bg='gray55',
+               command=self.window_add_chat).pack()
+        frame_top.pack(side='top', padx=10, pady=10)
 
-        frame_main = scrollableFrame.ScrollableFrame(self.frame1, 0)
+        frame_main = scrollableFrame.ScrollableFrame(self.frame1, bg='gray25')
 
         # вывод всех доступных чатов
         for chat in self.chats:
             txt = self.make_text_for_button(chat)
-            Button(frame_main.scrollable_frame, width='100', text=txt,
-                   command=lambda n=chat: self.goHead(n), height=4, anchor='w').pack(fill=X)
+            print(txt)
+            Button(frame_main.scrollable_frame,
+                   width='90',
+                   text=txt,
+                   bg="#2C3E50",
+                   fg="#EAECEE",
+                   activebackground="#17202A",
+                   font="Helvetica 12",
+                   command=lambda n=chat: self.goHead(n), height=3, anchor='w').pack()
         frame_main.pack(fill=BOTH, expand=1)
         self.frame1.pack(expand=1, fill=BOTH)
         self.root.mainloop()
@@ -44,49 +54,73 @@ class DialogsPage:
         self.rcv = threading.Thread(target=self.receive)
         self.rcv.start()
 
-        # создание страницы открытого чата
+    # создание страницы открытого чата
     def open_chat(self, chat):
         self.chat_id = chat['chat_id']
         self.name = chat['name']
         surname = chat['surname']
 
         # верстка экрана чата
-        frame2 = Frame(self.root)
+        frame2 = Frame(self.root, bg='gray25')
 
         # шапка из кнопки возврата и имени пользователя на той стороне чата)
-        frame_top = Frame(frame2)
-        Button(frame_top, text='<--', width=10, command=lambda: (frame2.destroy(), self.create_widgets()))\
-            .pack(side='left')
-        Label(frame_top, text='{0} {1}'.format(self.name, surname), width=90).pack(side='right')
-        frame_top.pack(side='top')
+        frame_top = Frame(frame2, bg='gray25')
+        Button(frame_top,
+               text='<--',
+               width=10,
+               bg="gray55",
+               activebackground='gray25',
+               command=lambda: (frame2.destroy(), self.create_widgets())).pack(side='left')
+        Label(frame_top,
+              text='{0} {1}'.format(self.name, surname),
+              width=90,
+              font="Helvetica 13 bold",
+              bg="gray55").pack(side='right')
+        frame_top.pack(side='top', padx=10, pady=10)
 
         # фрейм в котором отображаются сообщения
         frame_mid = Frame(frame2)
         self.messages = self.client.ask_history(self.chat_id)
-        self.chat_field = ScrolledText(frame_mid)
+        self.chat_field = ScrolledText(frame_mid,
+                                       bg="#17202A",
+                                       fg="#EAECEE",
+                                       font="Helvetica 12",
+                                       padx=10,
+                                       pady=10)
         self.chat_field.see(END)
         self.show_messages()
         self.chat_field.pack(fill=BOTH, expand=1)
-        frame_mid.pack(fill=BOTH, expand=1)
+        frame_mid.pack(fill=BOTH, padx=10)
 
         # фрейм-хвост
-        frame_bottom = Frame(frame2)
-        self.text_field = ScrolledText(frame_bottom, width=40, height=2)
-        self.text_field.pack(side='left')
-        Button(frame_bottom, command=lambda: (self.client.send_message(self.chat_id, self.client.user_id,
-                                                                       self.text_field.get(1.0, END)),
-                                              self.text_field.delete(1.0, END)),
-               text='send').pack(side='right')
+        frame_bottom = Frame(frame2, bg='gray25')
+        self.text_field = Text(frame_bottom,
+                               width=35,
+                               bg="#2C3E50",
+                               fg="#EAECEE")
+        self.text_field.pack(side='left', padx=10, pady=10, fill=BOTH)
+        Button(frame_bottom,
+               command=lambda: (self.client.send_message(self.chat_id,
+                                                         self.client.user_id,
+                                                         self.text_field.get(1.0, END)),
+                                self.text_field.delete(1.0, END)),
+               text='Send',
+               bg="gray55",
+               font="Helvetica 10 bold",
+               width=20,
+               activebackground='gray25').pack(side='right', fill=BOTH, expand=1, padx=10, pady=10)
         frame_bottom.pack(side='bottom')
-        frame2.pack(fill=Y, expand=1)
+        frame2.pack(fill=BOTH, expand=1)
 
     def show_messages(self):
+        self.chat_field.configure(state='normal')
         self.chat_field.delete(1.0, END)
         for message in self.messages:
             if self.client.user_id == message['user_id']:
                 self.chat_field.insert(END, '{0}: {1}'.format('You', message['content']))
             else:
                 self.chat_field.insert(END, '{0}: {1}'.format(self.name, message['content']))
+        self.chat_field.configure(state='disabled')
 
     def receive(self):
         while True:
@@ -113,9 +147,7 @@ class DialogsPage:
     def new_chat(self, username):
         result = self.client.add_chat(username)
         if result:
-            print(result)
             self.goHead(result)
-
 
     def make_text_for_button(self, chat):
         if chat['sender_id'] != 0:
@@ -123,6 +155,6 @@ class DialogsPage:
                 sender = 'you:'
             else:
                 sender = '{0} {1}:'.format(chat['name'], chat['surname'])
-            return '{0} {1}\n {2} {3}'.format(chat['name'], chat['surname'], sender, chat['content'])
+            return '{0} {1}\n{2} {3}...'.format(chat['name'], chat['surname'], sender, chat['content'][:10])
         else:
             return '{0} {1}'.format(chat['name'], chat['surname'])

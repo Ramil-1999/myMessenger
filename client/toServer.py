@@ -15,5 +15,5 @@ class ClientBroadcastClass:
             return 0
 
     def read_data(self):
-        message = self.socket.recv(1024)
+        message = self.socket.recv(2048)
         return json.loads(message.decode())
