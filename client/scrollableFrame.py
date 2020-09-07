@@ -4,8 +4,12 @@ from tkinter import *
 class ScrollableFrame(Frame):
     def __init__(self, container, *args, **kwargs):
         super().__init__(container, *args, **kwargs)
-        canvas = Canvas(self)
-        scrollbar = Scrollbar(self, orient="vertical", command=canvas.yview, width=15)
+        canvas = Canvas(self,
+                        bg='gray25')
+        scrollbar = Scrollbar(self,
+                              orient="vertical",
+                              command=canvas.yview,
+                              width=15)
         self.scrollable_frame = Frame(canvas, width=80)
 
         self.scrollable_frame.bind(

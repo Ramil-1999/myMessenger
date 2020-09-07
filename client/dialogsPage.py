@@ -23,9 +23,12 @@ class DialogsPage:
         self.frame1 = Frame(self.root, bg='gray25')
 
         frame_top = Frame(self.frame1, bg='gray25')
-        Button(frame_top, text='+',
+        Button(frame_top,
+               text='+',
                width=100,
                bg='gray55',
+               activebackground="gray25",
+               activeforeground="#EAECEE",
                command=self.window_add_chat).pack()
         frame_top.pack(side='top', padx=10, pady=10)
 
@@ -34,7 +37,6 @@ class DialogsPage:
         # вывод всех доступных чатов
         for chat in self.chats:
             txt = self.make_text_for_button(chat)
-            print(txt)
             Button(frame_main.scrollable_frame,
                    width='90',
                    text=txt,
@@ -42,7 +44,11 @@ class DialogsPage:
                    fg="#EAECEE",
                    activebackground="#17202A",
                    font="Helvetica 12",
-                   command=lambda n=chat: self.goHead(n), height=3, anchor='w').pack()
+                   height=3,
+                   anchor='w',
+                   justify='left',
+                   activeforeground="#EAECEE",
+                   command=lambda n=chat: self.goHead(n)).pack()
         frame_main.pack(fill=BOTH, expand=1)
         self.frame1.pack(expand=1, fill=BOTH)
         self.root.mainloop()
@@ -51,7 +57,7 @@ class DialogsPage:
         self.frame1.destroy()
         self.open_chat(chat)
 
-        self.rcv = threading.Thread(target=self.receive)
+        self.rcv = threading.Thread(target=self.receive, daemon=True)
         self.rcv.start()
 
     # создание страницы открытого чата
@@ -155,6 +161,9 @@ class DialogsPage:
                 sender = 'you:'
             else:
                 sender = '{0} {1}:'.format(chat['name'], chat['surname'])
-            return '{0} {1}\n{2} {3}...'.format(chat['name'], chat['surname'], sender, chat['content'][:10])
+            content = chat['content'][:-1]
+            if len(chat['content']) > 10:
+                content = chat['content'][:10] + '...'
+            return '{0} {1}\n{2} {3}'.format(chat['name'], chat['surname'], sender, content)
         else:
             return '{0} {1}'.format(chat['name'], chat['surname'])

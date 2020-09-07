@@ -12,7 +12,10 @@ class AuthPage:
         self.root.title('Authentication Page')
         self.root.geometry("{0}x{1}+{2}+{3}".format(400, 400, int((self.root.winfo_screenwidth() - 400) / 2),
                                                     int((self.root.winfo_screenheight() - 400) / 2)))
-        Style().configure("TButton", padding=3, relief="flat", background="#ccc")
+        Style().configure("TButton",
+                          padding=3,
+                          relief="flat",
+                          background="#ccc")
         frame1 = Frame()
         Label(frame1, text="Enter your login:", padding=3).pack()
         self.name = Entry(frame1)
