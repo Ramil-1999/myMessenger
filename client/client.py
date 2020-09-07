@@ -50,7 +50,9 @@ class Client:
         self.broadcast.send_data(request)
         response = self.broadcast.read_data()
         if response['status'] == 'ok':
-            return 1
+            return response
+        else:
+            return 0
 
     def ask_user_data(self, user_id):
         request = {

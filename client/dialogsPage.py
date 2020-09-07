@@ -41,8 +41,8 @@ class DialogsPage:
         self.frame1.destroy()
         self.open_chat(chat)
 
-        rcv = threading.Thread(target=self.receive)
-        rcv.start()
+        self.rcv = threading.Thread(target=self.receive)
+        self.rcv.start()
 
         # создание страницы открытого чата
     def open_chat(self, chat):
@@ -73,8 +73,9 @@ class DialogsPage:
         frame_bottom = Frame(frame2)
         self.text_field = ScrolledText(frame_bottom, width=40, height=2)
         self.text_field.pack(side='left')
-        Button(frame_bottom, command=lambda: self.client.send_message(self.chat_id, self.client.user_id,
-                                                                      self.text_field.get(1.0, END)),
+        Button(frame_bottom, command=lambda: (self.client.send_message(self.chat_id, self.client.user_id,
+                                                                       self.text_field.get(1.0, END)),
+                                              self.text_field.delete(1.0, END)),
                text='send').pack(side='right')
         frame_bottom.pack(side='bottom')
         frame2.pack(fill=Y, expand=1)
@@ -94,7 +95,6 @@ class DialogsPage:
                 if new_history != self.messages:
                     self.messages = new_history
                     self.show_messages()
-
             except:
                 pass
 
@@ -106,9 +106,16 @@ class DialogsPage:
         Label(root2, text='Username: ').pack()
         entry_user = Entry(root2)
         entry_user.pack()
-        Button(root2, text='Start chatting', command=lambda: (self.client.add_chat(entry_user.get()), root2.destroy()))\
+        Button(root2, text='Start chatting', command=lambda: (self.new_chat(entry_user.get()), root2.destroy()))\
             .pack()
         root2.mainloop()
+
+    def new_chat(self, username):
+        result = self.client.add_chat(username)
+        if result:
+            print(result)
+            self.goHead(result)
+
 
     def make_text_for_button(self, chat):
         if chat['sender_id'] != 0:
