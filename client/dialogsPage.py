@@ -143,11 +143,28 @@ class DialogsPage:
         root2.title('Create New Chat')
         root2.geometry("{0}x{1}+{2}+{3}".format(200, 200, int((self.root.winfo_screenwidth() - 200) / 2),
                                                 int((self.root.winfo_screenheight() - 200) / 2)))
-        Label(root2, text='Username: ').pack()
-        entry_user = Entry(root2)
+        frame_window = Frame(root2,
+                             bg='gray55')
+        frame_mid = Frame(frame_window,
+                          bg='gray55')
+        Label(frame_mid,
+              bg='gray55',
+              text='Username: ',
+              font="Helvetica 11").pack()
+        entry_user = Entry(frame_mid,
+                           bg='gray75',
+                           font="Helvetica 11")
         entry_user.pack()
-        Button(root2, text='Start chatting', command=lambda: (self.new_chat(entry_user.get()), root2.destroy()))\
-            .pack()
+        Button(frame_mid,
+               text='Start chatting',
+               bg="#2C3E50",
+               fg="#EAECEE",
+               activebackground="#17202A",
+               activeforeground="#EAECEE",
+               font="Helvetica 11",
+               command=lambda: (self.new_chat(entry_user.get()), root2.destroy())).pack()
+        frame_mid.pack(expand=1)
+        frame_window.pack(expand=1, fill=BOTH)
         root2.mainloop()
 
     def new_chat(self, username):

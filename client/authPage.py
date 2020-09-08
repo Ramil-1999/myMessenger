@@ -12,24 +12,59 @@ class AuthPage:
         self.root.title('Authentication Page')
         self.root.geometry("{0}x{1}+{2}+{3}".format(400, 400, int((self.root.winfo_screenwidth() - 400) / 2),
                                                     int((self.root.winfo_screenheight() - 400) / 2)))
-        Style().configure("TButton",
-                          padding=3,
-                          relief="flat",
-                          background="#ccc")
-        frame1 = Frame()
-        Label(frame1, text="Enter your login:", padding=3).pack()
-        self.name = Entry(frame1)
+        frame_main = Frame(self.root,
+                           bg='gray25')
+        frame_main2 = Frame(frame_main,
+                            bg='gray55')
+        frame1 = Frame(frame_main2,
+                       bg='gray55')
+        Label(frame1,
+              text="Enter your login:",
+              padx=5,
+              pady=5,
+              font="Helvetica 11",
+              bg='gray55').pack()
+        self.name = Entry(frame1,
+                          bg="gray75",
+                          font="Helvetica 11")
         self.name.pack()
-        Label(frame1, text="Enter password:", padding=3).pack()
-        self.password = Entry(frame1, show='*')
+        Label(frame1,
+              text="Enter password:",
+              padx=5,
+              pady=5,
+              font="Helvetica 11",
+              bg='gray55').pack()
+        self.password = Entry(frame1,
+                              show='*',
+                              bg="gray75",
+                              font="Helvetica 11")
+
         self.password.pack()
-        self.label = Label(frame1, foreground='red', padding=3)
+        self.label = Label(frame1,
+                           foreground='snow',
+                           padx=5,
+                           pady=5,
+                           font="Helvetica 10",
+                           bg="gray55")
         self.label.pack()
-        frame2 = Frame(frame1)
-        Button(frame2, text='Enter', command=self.send_data, style="TButton").pack(side='left')
-        Button(frame2, text='Registration', command=self.register, style="TButton").pack(side='left')
+        frame2 = Frame(frame1, bg='gray25')
+        Button(frame2,
+               text='Enter',
+               font="Helvetica 11",
+               bg="gray75",
+               activebackground='gray55',
+               command=self.send_data).pack(side='left')
+        Button(frame2,
+               text='Registration',
+               font="Helvetica 11",
+               bg="RoyalBlue4",
+               activebackground='#2C3E50',
+               fg="#EAECEE",
+               command=self.register).pack(side='left')
         frame2.pack()
         frame1.pack(expand=1)
+        frame_main2.pack(fill=BOTH, expand=1, padx=10, pady=10)
+        frame_main.pack(fill=BOTH, expand=1)
 
     @staticmethod
     def create_attention(attention):

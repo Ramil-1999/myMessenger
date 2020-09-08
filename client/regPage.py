@@ -1,5 +1,4 @@
 from tkinter import *
-from tkinter.ttk import *
 
 
 class RegPage:
@@ -13,26 +12,81 @@ class RegPage:
         self.root.geometry("{0}x{1}+{2}+{3}".format(300, 500, int((self.root.winfo_screenwidth() - 300) / 2),
                                                     int((self.root.winfo_screenheight() - 500) / 2)))
         self.root.title('Registration')
-        frame = Frame(self.root)
-        Label(frame, text="Enter your login:", padding=3).pack()
-        self.username = Entry(frame)
+        frame = Frame(self.root,
+                      bg='gray25')
+        frame_main = Frame(frame,
+                           bg='gray55')
+        frame_mid = Frame(frame_main,
+                          bg='gray55')
+        Label(frame_mid,
+              text="Enter your login:",
+              padx=5,
+              bg='gray55',
+              pady=5,
+              font="Helvetica 11").pack()
+        self.username = Entry(frame_mid,
+                              bg='gray75',
+                              font="Helvetica 11")
         self.username.pack()
-        Label(frame, text="Enter password:", padding=3).pack()
-        self.password = Entry(frame, show='*')
+        Label(frame_mid,
+              text="Enter password:",
+              bg='gray55',
+              padx=5,
+              pady=5,
+              font="Helvetica 11").pack()
+        self.password = Entry(frame_mid,
+                              show='*',
+                              bg='gray75',
+                              font="Helvetica 11")
         self.password.pack()
-        Label(frame, text="Confirm password:", padding=3).pack()
-        self.password2 = Entry(frame, show='*')
+        Label(frame_mid,
+              bg='gray55',
+              text="Confirm password:",
+              padx=5,
+              pady=5,
+              font="Helvetica 11").pack()
+        self.password2 = Entry(frame_mid,
+                               show='*',
+                               bg='gray75',
+                               font="Helvetica 11")
         self.password2.pack()
-        Label(frame, text='Enter your name:').pack()
-        self.name = Entry(frame)
+        Label(frame_mid,
+              text='Enter your name:',
+              bg='gray55',
+              padx=5,
+              pady=5,
+              font="Helvetica 11").pack()
+        self.name = Entry(frame_mid,
+                          bg='gray75',
+                          font="Helvetica 11",)
         self.name.pack()
-        Label(frame, text='Enter your surname').pack()
-        self.surname = Entry(frame)
+        Label(frame_mid,
+              text='Enter your surname',
+              bg='gray55',
+              padx=5,
+              pady=5,
+              font="Helvetica 11").pack()
+
+        self.surname = Entry(frame_mid,
+                             bg='gray75',
+                             font="Helvetica 11")
         self.surname.pack()
-        self.label = Label(frame, foreground='red', padding=3)
+        self.label = Label(frame_mid,
+                           foreground='snow',
+                           bg='gray55',
+                           font="Helvetica 10",
+                           padx=5,
+                           pady=5)
         self.label.pack()
-        Button(frame, text='Registration', command=self.send_data).pack()
-        frame.pack(expand=1)
+        Button(frame_mid,
+               text='Registration',
+               command=self.send_data,
+               font="Helvetica 11",
+               bg="RoyalBlue4",
+               activebackground='#2C3E50').pack()
+        frame_mid.pack(expand=1)
+        frame_main.pack(expand=1, fill=BOTH, padx=10, pady=10)
+        frame.pack(expand=1, fill=BOTH)
 
     def send_data(self):
         if len(self.password.get()) >= 0:
