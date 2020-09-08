@@ -92,6 +92,7 @@ class AuthPage:
     def recv(self):
         status = self.client.broadcast.read_data()
         if status['status'] == 'ok':
+            self.client.username = self.name.get()
             self.root.destroy()
             self.status = 1
             self.client.user_id = status['user_id']

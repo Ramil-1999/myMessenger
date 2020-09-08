@@ -11,6 +11,7 @@ class Client:
         self.broadcast = ClientBroadcastClass('127.0.0.1', 10001)
         self.logger = Logger("log.txt")
         self.user_id = None
+        self.username = None
 
     def ask_chats(self):
         request = {
@@ -51,8 +52,10 @@ class Client:
         response = self.broadcast.read_data()
         if response['status'] == 'ok':
             return response
-        else:
+        elif response['status'] == 'chat':
             return 0
+        elif response['status'] == 'user':
+            return -1
 
     def ask_user_data(self, user_id):
         request = {

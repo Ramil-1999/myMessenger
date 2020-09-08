@@ -118,15 +118,26 @@ class Db:
         s_user_id = self.get_user_id(username)
 
         if s_user_id:
-            args = (user_id, s_user_id)
-            name, surname = self.get_user_data(s_user_id)
-            cursor = self.conn.cursor()
-            cursor.execute(query, args)
-            self.conn.commit()
-            cursor.close()
-            return cursor.lastrowid, name, surname
+            if self.chat_exist(user_id, s_user_id):
+                args = (user_id, s_user_id)
+                name, surname = self.get_user_data(s_user_id)
+                cursor = self.conn.cursor()
+                cursor.execute(query, args)
+                self.conn.commit()
+                cursor.close()
+                return cursor.lastrowid, name, surname
+            else:
+                return 0  # чат уже существует
         else:
-            return 0
+            return -1  # пользователя не существует
+
+    def chat_exist(self, f_user_id, s_user_id):
+        chats = self.get_chats(f_user_id)
+
+        for chat in chats:
+            if chat['user_id'] == s_user_id:
+                return 0  # чат найден
+        return 1  # чат не найден
 
     def get_user_id(self, username):
         cursor = self.conn.cursor()
