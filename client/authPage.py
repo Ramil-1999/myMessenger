@@ -77,17 +77,20 @@ class AuthPage:
         view.mainloop()
 
     def send_data(self):
-        data_dict = {
-            'type': 'auth',
-            'username': self.name.get(),
-            'hash': self.password.get()
+        if self.is_fields_empty():
+            data_dict = {
+                'type': 'auth',
+                'username': self.name.get(),
+                'hash': self.password.get()
                 }
-        if self.client.broadcast.send_data(data_dict):
-            self.recv()
-            return 1
+            if self.client.broadcast.send_data(data_dict):
+                self.recv()
+                return 1
+            else:
+                self.client.logger.logging('Error of auth: Check something')
+                AuthPage.create_attention("Check something")
         else:
-            self.client.logger.logging('Error of auth: Check something')
-            AuthPage.create_attention("Check something")
+            self.label['text'] = '!please fill all fields'
 
     def recv(self):
         status = self.client.broadcast.read_data()
@@ -112,4 +115,7 @@ class AuthPage:
         auth.root.mainloop()
         return auth.status
 
-
+    def is_fields_empty(self):
+        if self.name.get() != '' and self.password.get() != '':
+            return 1
+        return 0

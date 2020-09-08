@@ -39,27 +39,32 @@ class RegPage:
                               bg='gray75',
                               font="Helvetica 11")
         self.password.pack()
+
         Label(frame_mid,
               bg='gray55',
               text="Confirm password:",
               padx=5,
               pady=5,
               font="Helvetica 11").pack()
+
         self.password2 = Entry(frame_mid,
                                show='*',
                                bg='gray75',
                                font="Helvetica 11")
         self.password2.pack()
+
         Label(frame_mid,
               text='Enter your name:',
               bg='gray55',
               padx=5,
               pady=5,
               font="Helvetica 11").pack()
+
         self.name = Entry(frame_mid,
                           bg='gray75',
                           font="Helvetica 11",)
         self.name.pack()
+
         Label(frame_mid,
               text='Enter your surname',
               bg='gray55',
@@ -71,6 +76,7 @@ class RegPage:
                              bg='gray75',
                              font="Helvetica 11")
         self.surname.pack()
+
         self.label = Label(frame_mid,
                            foreground='snow',
                            bg='gray55',
@@ -78,32 +84,37 @@ class RegPage:
                            padx=5,
                            pady=5)
         self.label.pack()
+
         Button(frame_mid,
                text='Registration',
                command=self.send_data,
                font="Helvetica 11",
                bg="RoyalBlue4",
                activebackground='#2C3E50').pack()
+
         frame_mid.pack(expand=1)
         frame_main.pack(expand=1, fill=BOTH, padx=10, pady=10)
         frame.pack(expand=1, fill=BOTH)
 
     def send_data(self):
-        if len(self.password.get()) >= 0:
-            if self.password.get() == self.password2.get():
-                data_dict = {
-                    'type': 'reg',
-                    'username': self.username.get(),
-                    'hash': self.password.get(),
-                    'name': self.name.get(),
-                    'surname': self.surname.get()
-                }
-                if self.client.broadcast.send_data(data_dict):
-                    self.recv()
+        if self.is_fields_empty():
+            if len(self.password.get()) >= 0:
+                if self.password.get() == self.password2.get():
+                    data_dict = {
+                        'type': 'reg',
+                        'username': self.username.get(),
+                        'hash': self.password.get(),
+                        'name': self.name.get(),
+                        'surname': self.surname.get()
+                    }
+                    if self.client.broadcast.send_data(data_dict):
+                        self.recv()
+                else:
+                    self.label['text'] = "!passwords don't match"
             else:
-                self.label['text'] = "!passwords don't match"
+                self.label['text'] = "!password is too short"
         else:
-            self.label['text'] = "!password is too short"
+            self.label['text'] = '!please fill all fields'
 
     def recv(self):
         status = self.client.broadcast.read_data()
@@ -119,3 +130,9 @@ class RegPage:
         reg.create_widgets()
         reg.root.mainloop()
         return reg.status
+
+    def is_fields_empty(self):
+        if self.username.get() != '' and self.password.get() != "" \
+                and self.name.get() != '' and self.surname.get() != '':
+            return 1
+        return 0

@@ -163,6 +163,7 @@ class DialogsPage:
                            bg='gray75',
                            font="Helvetica 11")
         entry_user.pack()
+        # поле предупреждения об ошибках
         self.label_new_chat_errors = Label(frame_mid,
                                            foreground='snow',
                                            padx=5,
